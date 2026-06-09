@@ -1,54 +1,74 @@
 import streamlit as st
 import google.generativeai as genai
+from PIL import Image
 
-# Configuração da página do portal
-st.set_page_config(page_title="Validador Inteligente de NF", page_icon="🧾", layout="centered")
+# 1. Configuração de Estilo e Página
+st.set_page_config(page_title="Validador MSE", page_icon="🧾", layout="wide")
 
-st.title("🧾 Validador Inteligente de Notas Fiscais")
-st.write("Faça o upload da sua NF em PDF para validar tomador, locais, impostos e alíquotas.")
+# CSS Customizado para visual Corporativo
+st.markdown("""
+    <style>
+    .main { background-color: #f8f9fa; }
+    .stButton>button { background-color: #b22222; color: white; border-radius: 5px; width: 100%; }
+    .reportview-container .main .block-container { padding-top: 2rem; }
+    h1 { color: #333; font-family: 'Helvetica Neue', sans-serif; }
+    .status-box { padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+    </style>
+    """, unsafe_content_usage=True)
 
-# Configura a API do Gemini
+# 2. Cabeçalho com Logo e Título
+col1, col2 = st.columns([1, 4])
+with col1:
+    # Usando a logo enviada
+    st.image("https://cdn.discordapp.com/attachments/1110300624388145223/1212818967837114368/mse_logo.png", width=150)
+with col2:
+    st.title("Validador Inteligente de Notas Fiscais - Contratos MSE")
+
+st.markdown("---")
+
+# 3. Configuração da API
 if "GEMINI_API_KEY" in st.secrets:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 else:
-    st.error("Chave de API não configurada. Configure a GEMINI_API_KEY nas configurações do Streamlit.")
+    st.error("Chave de API não configurada nos Secrets.")
 
-# Campo para o usuário arrastar o PDF
-uploaded_file = st.file_uploader("Escolha o arquivo PDF da Nota Fiscal", type=["pdf"])
+# 4. Upload do Arquivo
+st.sidebar.header("Configurações")
+uploaded_file = st.file_uploader("Arraste aqui o PDF da Nota Fiscal", type=["pdf"])
 
 if uploaded_file is not None:
-    st.info("Processando e validando a nota... Por favor, aguarde.")
-    
-    try:
-        # Lê os bytes do arquivo PDF diretamente
-        bytes_data = uploaded_file.read()
-        
-        # Prepara o arquivo para o Gemini usando a estrutura correta
-        pdf_part = {
-            "mime_type": "application/pdf",
-            "data": bytes_data
-        }
-        
-        # O Prompt com todas as regras fiscais que combinamos
-        prompt_validacao = """
-        Você é um auditor fiscal de elite. Analise este PDF de Nota Fiscal de Serviço (NFS-e) e valide os seguintes pontos estritamente com base na legislação brasileira (LC 116/2003):
-        
-        1. DADOS DO TOMADOR: Verifique se CNPJ/CPF, Razão Social e endereço do tomador estão presentes.
-        2. LOCAL DA PRESTAÇÃO VS FATURAMENTO: Avalie se a cidade de prestação e de faturamento batem, ou se a regra de retenção do ISS no local da prestação foi seguida corretamente conforme as exceções da lei.
-        3. CÓDIGO DE TRIBUTAÇÃO VS SERVIÇO: Verifique se o código de serviço/tributação é coerente com a descrição do serviço prestado.
-        4. IMPOSTOS (ISS E INSS): Calcule se a alíquota do ISS (entre 2% e 5%) e do INSS (se houver) estão matemáticas e legalmente corretas com base no valor bruto.
-        5. VALOR TOTAL: Valide a equação básica: Valor Líquido = Valor Bruto - Retenções.
-        
-        Formate sua resposta em Markdown bem visual: Use um status geral (SUCESSO ou ALERTA) em destaque, uma tabela com o resumo dos dados encontrados e uma lista detalhada de inconformidades caso existam.
-        """
-        
-        # Chamada corrigida usando a classe GenerativeModel correta
-        model = genai.GenerativeModel(model_name="gemini-2.5-flash")
-        response = model.generate_content([pdf_part, prompt_validacao])
-        
-        # Mostra o resultado na tela
-        st.success("Análise Concluída!")
-        st.markdown(response.text)
-        
-    except Exception as e:
-        st.error(f"Erro ao processar o arquivo: {e}")
+    with st.spinner("Analisando Nota Fiscal sob as regras de Contratos MSE..."):
+        try:
+            bytes_data = uploaded_file.read()
+            pdf_part = {"mime_type": "application/pdf", "data": bytes_data}
+            
+            # PROMPT ESTRUTURADO PARA O PADRÃO MSE
+            prompt_mse = """
+            Você é um Auditor Fiscal Sênior da MSE. Analise este PDF e siga este formato rigoroso de resposta:
+
+            ### 1. QUADRO DE RESUMO EXECUTIVO
+            Crie uma tabela Markdown com as colunas: | Item de Validação | Status (✅ OK / ⚠️ ALERTA / ❌ ERRO) | Observação Curta |
+            Itens a validar: Dados do Tomador, Local da Prestação vs Faturamento, Código de Tributação, Cálculo ISS, Cálculo INSS, Valor Total (Equação do Líquido).
+
+            ### 2. ANÁLISE DETALHADA (DISCORRER)
+            Abaixo da tabela, escreva uma análise técnica detalhada discorrendo sobre:
+            - Conformidade com a LC 116/2003.
+            - Justificativa detalhada de cada alerta ou erro encontrado.
+            - Conferência matemática exata dos impostos retidos.
+            - Recomendação final para o setor de contratos.
+
+            Use um tom profissional, corporativo e direto.
+            """
+            
+            model = genai.GenerativeModel(model_name="gemini-2.0-flash")
+            response = model.generate_content([pdf_part, prompt_mse])
+            
+            # EXIBIÇÃO DOS RESULTADOS
+            st.success("Análise Finalizada com Sucesso!")
+            st.markdown(response.text)
+            
+        except Exception as e:
+            st.error(f"Erro técnico no processamento: {e}")
+
+st.sidebar.markdown("---")
+st.sidebar.info("Desenvolvido para Gestão de Contratos MSE.")
