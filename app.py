@@ -7,7 +7,7 @@ st.set_page_config(page_title="Validador Inteligente de NF", page_icon="🧾", l
 st.title("🧾 Validador Inteligente de Notas Fiscais")
 st.write("Faça o upload da sua NF em PDF para validar tomador, locais, impostos e alíquotas.")
 
-# Configura a API do Gemini (buscando de forma segura nos segredos do site)
+# Configura a API do Gemini
 if "GEMINI_API_KEY" in st.secrets:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 else:
@@ -23,7 +23,7 @@ if uploaded_file is not None:
         # Lê os bytes do arquivo PDF diretamente
         bytes_data = uploaded_file.read()
         
-        # Prepara o arquivo para o Gemini
+        # Prepara o arquivo para o Gemini usando a estrutura correta
         pdf_part = {
             "mime_type": "application/pdf",
             "data": bytes_data
@@ -39,11 +39,11 @@ if uploaded_file is not None:
         4. IMPOSTOS (ISS E INSS): Calcule se a alíquota do ISS (entre 2% e 5%) e do INSS (se houver) estão matemáticas e legalmente corretas com base no valor bruto.
         5. VALOR TOTAL: Valide a equação básica: Valor Líquido = Valor Bruto - Retenções.
         
-        Formate sua resposta em Markdown bem visual: Use um status geral (SUCESSO ou ALERTA), uma tabela com o resumo dos dados encontrados e uma lista detalhada de inconformidades caso existam.
+        Formate sua resposta em Markdown bem visual: Use um status geral (SUCESSO ou ALERTA) em destaque, uma tabela com o resumo dos dados encontrados e uma lista detalhada de inconformidades caso existam.
         """
         
-        # Chama o modelo Gemini capaz de ler arquivos
-        model = genai.InteractiveModel(model_name="gemini-2.5-flash") # Ou o modelo multimodal mais recente disponível
+        # Chamada corrigida usando a classe GenerativeModel correta
+        model = genai.GenerativeModel(model_name="gemini-1.5-flash")
         response = model.generate_content([pdf_part, prompt_validacao])
         
         # Mostra o resultado na tela
