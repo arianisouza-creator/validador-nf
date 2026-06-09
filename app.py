@@ -1,7 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 
-# 1. Configuração da Página e Título Profissional
+# 1. Configuração da Página e Layout Expandido
 st.set_page_config(
     page_title="Validador MSE - Gestão de Contratos",
     page_icon="🧾",
@@ -9,29 +9,33 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Cabeçalho Corporativo com Tratamento de Caracteres Especiais e Cores Fortes
-# O segredo está no '%20' substituindo o espaço no nome do arquivo da logo
-st.markdown("""
-    <div style="display: flex; align-items: center; gap: 25px; padding: 20px; border-bottom: 3px solid #b22222; margin-bottom: 30px; background-color: rgba(255,255,255,0.03); border-radius: 8px;">
-        <img src="https://raw.githubusercontent.com/arianisouza-creator/validador-nf/main/logo%20mse.png" width="140" style="background-color: white; padding: 8px; border-radius: 6px; display: block;">
-        <div>
-            <h1 style="margin: 0; color: #FFFFFF !important; font-family: 'Helvetica Neue', sans-serif; font-size: 34px; font-weight: bold; letter-spacing: -0.5px;">
-                Validador Inteligente de Notas Fiscais
-            </h1>
-            <h2 style="margin: 5px 0 0 0; color: #ff4d4d !important; font-family: 'Helvetica Neue', sans-serif; font-size: 20px; font-weight: 500;">
-                Contratos e Gestão Documental — MSE
-            </h2>
-        </div>
-    </div>
-""", unsafe_allow_html=True)
+# 2. Barra Lateral (Sidebar) - Identidade Visual Garantida
+st.sidebar.markdown("### 🏢 Identidade Corporativa")
+try:
+    # Método nativo do Streamlit apontando para o arquivo que está na raiz do seu GitHub
+    st.sidebar.image("logo mse.png", use_container_width=True)
+except:
+    # Fallback caso ocorra qualquer variação no nome do arquivo
+    st.sidebar.subheader("MSE ENGENHARIA")
 
-# 3. Configuração de Segurança da API
+st.sidebar.markdown("---")
+st.sidebar.markdown("### 📋 Escopo do Validador")
+st.sidebar.info(
+    "Este portal utiliza inteligência artificial avançada para automatizar a conferência fiscal de Notas Fiscais de Serviço, garantindo conformidade com a LC 116/2003 e eficiência no setor de Contratos."
+)
+
+# 3. Cabeçalho da Área Principal (Texto Puro de Alto Contraste)
+st.title("Validador Inteligente de Notas Fiscais")
+st.subheader("Contratos e Gestão Documental — MSE")
+st.markdown("---")
+
+# 4. Configuração de Segurança da API
 if "GEMINI_API_KEY" in st.secrets:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 else:
     st.error("⚠️ Chave de API não configurada nos 'Secrets' do Streamlit.")
 
-# 4. Área Principal
+# 5. Área de Upload Central
 st.markdown("### 📥 Upload do Documento")
 st.write("Arraste ou selecione o PDF da Nota Fiscal de Serviço (NFS-e) para iniciar a auditoria fiscal automática.")
 
@@ -46,7 +50,7 @@ if uploaded_file is not None:
             bytes_data = uploaded_file.read()
             pdf_part = {"mime_type": "application/pdf", "data": bytes_data}
             
-            # PROMPT EXECUTIVO DE ALTO PADRÃO
+            # PROMPT EXECUTIVO DE ALTO PADRÃO (Garante títulos limpos e tabelas organizadas)
             prompt_mse = """
             Você é um Auditor Fiscal Sênior especializado em Contratos da MSE Engenharia. Analise este PDF de NFS-e e formate sua resposta exatamente seguindo esta estrutura corporativa em Markdown:
 
@@ -82,16 +86,11 @@ if uploaded_file is not None:
             else:
                 status_container.error(f"❌ Erro técnico no processamento do arquivo: {e}")
 
-# 5. Rodapé Profissional na Sidebar
-st.sidebar.markdown("---")
-st.sidebar.markdown("### 🏢 Gestão de Contratos MSE")
-st.sidebar.info(
-    "Este portal utiliza inteligência artificial avançada para automatizar a conferência fiscal de Notas Fiscais de Serviço, garantindo conformidade e eficiência."
-)
+# Rodapé da Sidebar
 st.sidebar.markdown("<br><br><br>", unsafe_allow_html=True)
 st.sidebar.markdown("""
-    <div style="text-align: center; color: #888; font-size: 12px;">
-        Desenvolvido internamente para a MSE Engenharia<br>
-        v1.2 Corporate Edition
+    <div style="text-align: center; color: #888; font-size: 11px; font-family: sans-serif;">
+        Desenvolvido para MSE Engenharia<br>
+        v1.3 Corporate Edition
     </div>
 """, unsafe_allow_html=True)
