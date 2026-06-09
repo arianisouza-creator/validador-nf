@@ -3,22 +3,23 @@ import google.generativeai as genai
 
 # 1. Configuração da Página e Título Profissional
 st.set_page_config(
-    page_title="Validador MSE - Gestão Documental",
+    page_title="Validador MSE - Gestão de Contratos",
     page_icon="🧾",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# 2. Cabeçalho Corporativo com Logo e Título Corrigidos para Tema Escuro/Claro
+# 2. Cabeçalho Corporativo com Tratamento de Caracteres Especiais e Cores Fortes
+# O segredo está no '%20' substituindo o espaço no nome do arquivo da logo
 st.markdown("""
-    <div style="display: flex; align-items: center; gap: 20px; padding: 15px; border-bottom: 3px solid #b22222; margin-bottom: 30px; background-color: rgba(255,255,255,0.05); border-radius: 8px;">
-        <img src="https://raw.githubusercontent.com/arianisouza-creator/validador-nf/main/logo%20mse.png" width="130" style="background-color: white; padding: 5px; border-radius: 4px;">
+    <div style="display: flex; align-items: center; gap: 25px; padding: 20px; border-bottom: 3px solid #b22222; margin-bottom: 30px; background-color: rgba(255,255,255,0.03); border-radius: 8px;">
+        <img src="https://raw.githubusercontent.com/arianisouza-creator/validador-nf/main/logo%20mse.png" width="140" style="background-color: white; padding: 8px; border-radius: 6px; display: block;">
         <div>
-            <h1 style="margin: 0; color: #FFFFFF; font-family: 'Helvetica Neue', sans-serif; font-size: 32px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+            <h1 style="margin: 0; color: #FFFFFF !important; font-family: 'Helvetica Neue', sans-serif; font-size: 34px; font-weight: bold; letter-spacing: -0.5px;">
                 Validador Inteligente de Notas Fiscais
             </h1>
-            <h2 style="margin: 0; color: #ff4d4d; font-family: 'Helvetica Neue', sans-serif; font-size: 20px; font-weight: normal;">
-                Gestão Documental
+            <h2 style="margin: 5px 0 0 0; color: #ff4d4d !important; font-family: 'Helvetica Neue', sans-serif; font-size: 20px; font-weight: 500;">
+                Contratos e Gestão Documental — MSE
             </h2>
         </div>
     </div>
@@ -45,7 +46,7 @@ if uploaded_file is not None:
             bytes_data = uploaded_file.read()
             pdf_part = {"mime_type": "application/pdf", "data": bytes_data}
             
-            # PROMPT ESTRUTURADO PARA O PADRÃO EXECUTIVO MSE
+            # PROMPT EXECUTIVO DE ALTO PADRÃO
             prompt_mse = """
             Você é um Auditor Fiscal Sênior especializado em Contratos da MSE Engenharia. Analise este PDF de NFS-e e formate sua resposta exatamente seguindo esta estrutura corporativa em Markdown:
 
@@ -54,7 +55,7 @@ if uploaded_file is not None:
             ---
 
             ### 1. QUADRO DE RESUMO EXECUTIVO
-            Crie uma tabela Markdown rigorosa com as colunas: | Item de Validação | Status (✅ OK / ⚠️ ALERTA / ❌ ERRO) | Observação Curta e Direta |
+            Crie uma tabela Markdown rigorosa com as colunas: | Item de Validação | Status (✅ SUCONFORMIDADE / ⚠️ ALERTA / ❌ ERRO) | Observação Curta e Direta |
             Itens a validar: 
             1. Dados do Tomador (CNPJ/Endereço)
             2. Local da Prestação vs Faturamento
@@ -76,7 +77,6 @@ if uploaded_file is not None:
             st.markdown(response.text)
             
         except Exception as e:
-            # Tratamento amigável para estouro de cota da API
             if "429" in str(e):
                 status_container.error("⚠️ Limite de requisições temporário atingido. Por favor, aguarde 30 segundos e tente reenviar o arquivo.")
             else:
@@ -92,6 +92,6 @@ st.sidebar.markdown("<br><br><br>", unsafe_allow_html=True)
 st.sidebar.markdown("""
     <div style="text-align: center; color: #888; font-size: 12px;">
         Desenvolvido internamente para a MSE Engenharia<br>
-        v1.1 Corporate Edition
+        v1.2 Corporate Edition
     </div>
 """, unsafe_allow_html=True)
