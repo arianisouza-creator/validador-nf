@@ -43,7 +43,7 @@ if uploaded_file is not None:
         """
         
         # Chamada corrigida usando a classe GenerativeModel correta
-        model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+        model = genai.GenerativeModel(model_name="gemini-2.5-flash")
         response = model.generate_content([pdf_part, prompt_validacao])
         
         # Mostra o resultado na tela
