@@ -17,7 +17,7 @@ st.markdown("""
 col1, col2 = st.columns([1, 4])
 with col1:
     # URL da logo da MSE
-    st.image("https://cdn.discordapp.com/attachments/1110300624388145223/1212818967837114368/mse_logo.png", width=150)
+    st.image("logo mse.png", width=150)
 with col2:
     st.title("Validador Inteligente de Notas Fiscais - Contratos MSE")
 
