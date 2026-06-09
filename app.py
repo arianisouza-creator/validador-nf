@@ -3,7 +3,7 @@ import google.generativeai as genai
 
 # 1. Configuração da Página e Layout Expandido
 st.set_page_config(
-    page_title="Validador MSE - Gestão de Contratos",
+    page_title="Validador MSE - Gestão Documental",
     page_icon="🧾",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -26,7 +26,7 @@ st.sidebar.info(
 
 # 3. Cabeçalho da Área Principal (Texto Puro de Alto Contraste)
 st.title("Validador Inteligente de Notas Fiscais")
-st.subheader("Contratos e Gestão Documental — MSE")
+st.subheader("Gestão Documental — MSE")
 st.markdown("---")
 
 # 4. Configuração de Segurança da API
