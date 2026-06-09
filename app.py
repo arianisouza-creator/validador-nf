@@ -1,25 +1,22 @@
 import streamlit as st
 import google.generativeai as genai
-from PIL import Image
 
 # 1. Configuração de Estilo e Página
 st.set_page_config(page_title="Validador MSE", page_icon="🧾", layout="wide")
 
-# CSS Customizado para visual Corporativo
+# CSS Customizado para visual Corporativo (Correção aplicada aqui)
 st.markdown("""
     <style>
     .main { background-color: #f8f9fa; }
     .stButton>button { background-color: #b22222; color: white; border-radius: 5px; width: 100%; }
-    .reportview-container .main .block-container { padding-top: 2rem; }
     h1 { color: #333; font-family: 'Helvetica Neue', sans-serif; }
-    .status-box { padding: 20px; border-radius: 10px; margin-bottom: 20px; }
     </style>
-    """, unsafe_content_usage=True)
+    """, unsafe_allow_html=True)
 
 # 2. Cabeçalho com Logo e Título
 col1, col2 = st.columns([1, 4])
 with col1:
-    # Usando a logo enviada
+    # URL da logo da MSE
     st.image("https://cdn.discordapp.com/attachments/1110300624388145223/1212818967837114368/mse_logo.png", width=150)
 with col2:
     st.title("Validador Inteligente de Notas Fiscais - Contratos MSE")
@@ -60,7 +57,7 @@ if uploaded_file is not None:
             Use um tom profissional, corporativo e direto.
             """
             
-            model = genai.GenerativeModel(model_name="gemini-2.0-flash")
+            model = genai.GenerativeModel(model_name="gemini-2.5-flash")
             response = model.generate_content([pdf_part, prompt_mse])
             
             # EXIBIÇÃO DOS RESULTADOS
